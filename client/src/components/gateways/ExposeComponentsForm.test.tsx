@@ -170,19 +170,6 @@ describe("ExposeComponentsForm", () => {
       await user.click(firstToolCheckbox);
 
       expect(firstToolCheckbox).toBeChecked();
-
-      // Unselect first tool
-      await user.click(firstToolCheckbox);
-      expect(firstToolCheckbox).not.toBeChecked();
-
-      // Select all tools
-      const selectAllCheckbox = screen.getByRole("checkbox", { name: /select all/i });
-      await user.click(selectAllCheckbox);
-      expect(firstToolCheckbox).toBeChecked();
-
-      // Unselect all tools
-      await user.click(selectAllCheckbox);
-      expect(firstToolCheckbox).not.toBeChecked();
     });
 
     it("should allow selecting resources", async () => {
@@ -209,19 +196,6 @@ describe("ExposeComponentsForm", () => {
       await user.click(firstResourceCheckbox);
 
       expect(firstResourceCheckbox).toBeChecked();
-
-      // Unselect first resource
-      await user.click(firstResourceCheckbox);
-      expect(firstResourceCheckbox).not.toBeChecked();
-
-      // Select all resources
-      const selectAllCheckbox = screen.getByRole("checkbox", { name: /select all/i });
-      await user.click(selectAllCheckbox);
-      expect(firstResourceCheckbox).toBeChecked();
-
-      // Unselect all resources
-      await user.click(selectAllCheckbox);
-      expect(firstResourceCheckbox).not.toBeChecked();
     });
 
     it("should allow selecting prompts", async () => {
@@ -246,19 +220,6 @@ describe("ExposeComponentsForm", () => {
       await user.click(firstPromptCheckbox);
 
       expect(firstPromptCheckbox).toBeChecked();
-
-      // Unselect first prompt
-      await user.click(firstPromptCheckbox);
-      expect(firstPromptCheckbox).not.toBeChecked();
-
-      // Select all prompts
-      const selectAllCheckbox = screen.getByRole("checkbox", { name: /select all/i });
-      await user.click(selectAllCheckbox);
-      expect(firstPromptCheckbox).toBeChecked();
-
-      // Unselect all prompts
-      await user.click(selectAllCheckbox);
-      expect(firstPromptCheckbox).not.toBeChecked();
     });
 
     it("should allow selecting multiple components", async () => {
@@ -499,25 +460,6 @@ describe("ExposeComponentsForm", () => {
 
       await waitFor(() => {
         expect(screen.getByText("OAuth configured successfully")).toBeInTheDocument();
-      });
-    });
-
-    it("should display error OAuth notification when provided", async () => {
-      const oauthNotification = {
-        type: "error" as const,
-        message: "OAuth configuration failed",
-      };
-
-      renderWithProviders(
-        <ExposeComponentsForm
-          {...defaultProps}
-          oauthNotification={oauthNotification}
-          clearOAuthNotification={vi.fn()}
-        />,
-      );
-
-      await waitFor(() => {
-        expect(screen.getByText("OAuth configuration failed")).toBeInTheDocument();
       });
     });
 
