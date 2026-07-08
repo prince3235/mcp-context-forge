@@ -1085,6 +1085,7 @@ describe("Resources", () => {
     it("displays error with message when detail is missing from ApiError in main list", async () => {
       const user = userEvent.setup();
       server.use(
+        http.get("/resources", () => HttpResponse.json([createMockResource(1, "test-gateway")])),
         http.delete("*/resources/:id", () => {
           return HttpResponse.json({ message: "Specific Error Message" }, { status: 400 });
         })
@@ -1117,6 +1118,7 @@ describe("Resources", () => {
     it("displays standard error message on network failure in main list", async () => {
       const user = userEvent.setup();
       server.use(
+        http.get("/resources", () => HttpResponse.json([createMockResource(1, "test-gateway")])),
         http.delete("*/resources/:id", () => {
           return HttpResponse.error();
         })

@@ -55,7 +55,7 @@ describe("ResourceForm", () => {
   describe("Cancel button", () => {
     it("calls onToggle when Cancel button clicked", async () => {
       const onToggle = vi.fn();
-      const user = userEvent.setup();
+      const user = userEvent.setup({ delay: null });
       renderForm({ onToggle });
 
       await user.click(screen.getByRole("button", { name: /Cancel/i }));
@@ -65,7 +65,7 @@ describe("ResourceForm", () => {
 
   describe("Validation", () => {
     it("shows required field errors on submit with empty fields", async () => {
-      const user = userEvent.setup();
+      const user = userEvent.setup({ delay: null });
       renderForm();
 
       await user.click(screen.getByRole("button", { name: /Add resources/i }));
@@ -76,7 +76,7 @@ describe("ResourceForm", () => {
     });
 
     it("shows uri error when uri is missing", async () => {
-      const user = userEvent.setup();
+      const user = userEvent.setup({ delay: null });
       renderForm();
 
       await user.type(screen.getByLabelText(/Name/), "My Resource");
@@ -89,7 +89,7 @@ describe("ResourceForm", () => {
     });
 
     it("shows content error when content is missing", async () => {
-      const user = userEvent.setup();
+      const user = userEvent.setup({ delay: null });
       renderForm();
 
       await user.type(screen.getByLabelText(/URI/), "resource://example/path");
@@ -111,7 +111,7 @@ describe("ResourceForm", () => {
         }),
       );
 
-      const user = userEvent.setup();
+      const user = userEvent.setup({ delay: null });
       renderForm();
 
       await user.type(screen.getByLabelText(/URI/), "resource://example/path");
@@ -127,7 +127,7 @@ describe("ResourceForm", () => {
 
     it("calls onSuccess after successful submit", async () => {
       const onSuccess = vi.fn();
-      const user = userEvent.setup();
+      const user = userEvent.setup({ delay: null });
       renderForm({ onSuccess });
 
       await user.type(screen.getByLabelText(/URI/), "resource://example/path");
@@ -140,7 +140,7 @@ describe("ResourceForm", () => {
 
     it("fills out optional fields correctly", async () => {
       const onSuccess = vi.fn();
-      const user = userEvent.setup();
+      const user = userEvent.setup({ delay: null });
       renderForm({ onSuccess });
 
       await user.type(screen.getByLabelText(/URI/), "resource://example/path");
@@ -175,7 +175,7 @@ describe("ResourceForm", () => {
         ),
       );
 
-      const user = userEvent.setup();
+      const user = userEvent.setup({ delay: null });
       renderForm();
 
       await user.type(screen.getByLabelText(/URI/), "resource://example/path");
