@@ -38,6 +38,7 @@ import { RouterProvider } from "@/router";
 import { I18nProvider } from "@/i18n";
 import type { ReactElement } from "react";
 import type { ResourceRead } from "@/generated/types";
+import { ResourceDetailsPanel } from "@/components/resources/ResourceDetailsPanel";
 
 type Resource = NonNullable<ResourceRead>;
 
@@ -978,6 +979,175 @@ describe("Resources", () => {
       });
 
       consoleErrorSpy.mockRestore();
+    });
+  });
+
+  describe("ResourceDetailsPanel", () => {
+    it("renders with missing/false properties correctly (enabled=false, size, tags)", () => {
+      const mockResource: any = {
+        id: "res-test",
+        name: "Test Resource",
+        uri: "test://uri",
+        visibility: "public",
+        enabled: false,
+        size: 1024,
+        tags: ["test-tag", "api"],
+      };
+
+      render(
+        <I18nProvider>
+          <ResourceDetailsPanel
+            resources={[mockResource]}
+            gatewaySlug="test-gateway"
+            open={true}
+            onClose={vi.fn()}
+            onDeleteResource={vi.fn()}
+          />
+        </I18nProvider>,
+      );
+
+      expect(screen.getByText("Test Resource")).toBeInTheDocument();
+      expect(screen.getByText("1 KB")).toBeInTheDocument(); // size formatter
+      expect(screen.getByText("test-tag")).toBeInTheDocument();
+      expect(screen.getByText("api")).toBeInTheDocument();
+    });
+  });
+
+  describe("Utility and Interaction coverage", () => {
+    it("handles invalid URI in getUriLabel by falling back to original string", async () => {
+      const mockResource: any = createMockResource(1, "test-gateway");
+      mockResource.uri = "invalid-uri-no-protocol"; // new URL will throw
+
+      server.use(http.get("/resources", () => HttpResponse.json([mockResource])));
+      renderWithRouter(<Resources />);
+
+      await waitFor(() => {
+        expect(screen.getByText("invalid-uri-no-protocol")).toBeInTheDocument();
+      });
+    });
+
+    it("handles Add resources card keyboard activation with Space", async () => {
+      const user = userEvent.setup();
+      server.use(http.get("/resources", () => HttpResponse.json([])));
+      renderWithRouter(<Resources />);
+
+      await waitFor(() => {
+        expect(screen.getByText("Add resources")).toBeInTheDocument();
+      });
+
+      const addCard = screen.getByRole("button");
+      addCard.focus();
+      await user.keyboard(" ");
+
+      await waitFor(() => {
+        expect(screen.getByRole("heading", { name: "Add resources" })).toBeInTheDocument();
+      });
+    });
+
+    it("displays error detail from ApiError when delete fails", async () => {
+      const user = userEvent.setup();
+      const mockResources: Resource[] = [createMockResource(1, "test-gateway")];
+      server.use(http.get("/resources", () => HttpResponse.json(mockResources)));
+
+      renderWithRouter(<Resources />);
+
+      await waitFor(() => {
+        expect(screen.getByText("Resource 1")).toBeInTheDocument();
+      });
+
+      // Provide ResourceDetailsPanel which handles delete directly, OR we can mock the api directly
+      server.use(
+        http.delete("*/resources/:id", () => {
+          return HttpResponse.json({ detail: "Custom API Error Detail" }, { status: 403 });
+        }),
+      );
+
+      const moreOptionsButton = screen.getByLabelText("More options for Resource 1");
+      await user.click(moreOptionsButton);
+      const viewDetailsItem = await screen.findByText("View Details");
+      await user.click(viewDetailsItem);
+
+      await waitFor(() => {
+        expect(screen.getByText(/gateway-test-gateway Resources/i)).toBeInTheDocument();
+      });
+
+      const deleteActionBtn = screen.getByRole("button", { name: /delete resource/i });
+      await user.click(deleteActionBtn);
+
+      const confirmDeleteBtn = screen.getByRole("button", { name: /delete/i });
+      await user.click(confirmDeleteBtn);
+
+      await waitFor(() => {
+        expect(toast.error).toHaveBeenCalledWith(
+          expect.stringContaining("Custom API Error Detail"),
+        );
+      });
+    });
+
+    it("displays error with message when detail is missing from ApiError in main list", async () => {
+      const user = userEvent.setup();
+      server.use(
+        http.get("/resources", () => HttpResponse.json([createMockResource(1, "test-gateway")])),
+        http.delete("*/resources/:id", () => {
+          return HttpResponse.json({ message: "Specific Error Message" }, { status: 400 });
+        }),
+      );
+
+      renderWithRouter(<Resources />);
+
+      await waitFor(() => {
+        expect(screen.getByText("Resource 1")).toBeInTheDocument();
+      });
+
+      const moreOptionsButton = screen.getByLabelText("More options for Resource 1");
+      await user.click(moreOptionsButton);
+      const deleteItem = screen.getByRole("menuitem", { name: "Delete" });
+      await user.click(deleteItem);
+
+      const confirmButton = screen.getByRole("button", { name: "Delete" });
+      await user.click(confirmButton);
+
+      await waitFor(() => {
+        expect(mockToastError).toHaveBeenCalledWith(
+          expect.stringContaining("Error deleting resource"),
+          expect.objectContaining({
+            description: expect.stringContaining("Specific Error Message"),
+          }),
+        );
+      });
+    });
+
+    it("displays standard error message on network failure in main list", async () => {
+      const user = userEvent.setup();
+      server.use(
+        http.get("/resources", () => HttpResponse.json([createMockResource(1, "test-gateway")])),
+        http.delete("*/resources/:id", () => {
+          return HttpResponse.error();
+        }),
+      );
+
+      renderWithRouter(<Resources />);
+
+      await waitFor(() => {
+        expect(screen.getByText("Resource 1")).toBeInTheDocument();
+      });
+
+      const moreOptionsButton = screen.getByLabelText("More options for Resource 1");
+      await user.click(moreOptionsButton);
+      const deleteItem = screen.getByRole("menuitem", { name: "Delete" });
+      await user.click(deleteItem);
+
+      const confirmButton = screen.getByRole("button", { name: "Delete" });
+      await user.click(confirmButton);
+
+      await waitFor(() => {
+        expect(mockToastError).toHaveBeenCalledWith(
+          expect.stringContaining("Error deleting resource"),
+          expect.objectContaining({
+            description: expect.stringContaining("Failed to fetch"),
+          }),
+        );
+      });
     });
   });
 });

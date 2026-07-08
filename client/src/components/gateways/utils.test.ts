@@ -70,10 +70,10 @@ describe("Gateways Utils", () => {
   describe("copyToClipboard", () => {
     it("calls navigator.clipboard.writeText if available", () => {
       const writeTextMock = vi.fn();
-      Object.assign(navigator, {
-        clipboard: {
-          writeText: writeTextMock,
-        },
+      Object.defineProperty(navigator, "clipboard", {
+        value: { writeText: writeTextMock },
+        configurable: true,
+        writable: true,
       });
 
       copyToClipboard("test-text");
@@ -81,14 +81,20 @@ describe("Gateways Utils", () => {
     });
 
     it("does not throw if clipboard is undefined", () => {
-      const originalClipboard = navigator.clipboard;
-      // @ts-expect-error - invalid url - testing missing clipboard
-      delete navigator.clipboard;
+      Object.defineProperty(navigator, "clipboard", {
+        value: undefined,
+        configurable: true,
+        writable: true,
+      });
 
       expect(() => copyToClipboard("test")).not.toThrow();
 
-      // @ts-expect-error - restoring clipboard
-      navigator.clipboard = originalClipboard;
+      // Restore
+      Object.defineProperty(navigator, "clipboard", {
+        value: { writeText: vi.fn() },
+        configurable: true,
+        writable: true,
+      });
     });
   });
 
