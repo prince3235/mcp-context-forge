@@ -90,7 +90,6 @@ export function ToolForm({ isOpen, onToggle, onSuccess, tool }: ToolFormProps) {
     openApiSpecUrl,
     showSpecUrlInput,
     errors,
-    isValid,
     isSubmitting,
     setName,
     setUrl,
