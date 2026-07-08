@@ -37,7 +37,7 @@ describe("ResourceDetailsPanel", () => {
         open={true}
         onClose={vi.fn()}
         onDeleteResource={vi.fn()}
-      />
+      />,
     );
     expect(screen.getByText("my-gateway Resources")).toBeInTheDocument();
   });
@@ -50,7 +50,7 @@ describe("ResourceDetailsPanel", () => {
         open={true}
         onClose={vi.fn()}
         onDeleteResource={vi.fn()}
-      />
+      />,
     );
 
     expect(screen.getByText("Resource 1")).toBeInTheDocument();
@@ -75,7 +75,7 @@ describe("ResourceDetailsPanel", () => {
         open={true}
         onClose={vi.fn()}
         onDeleteResource={onDelete}
-      />
+      />,
     );
 
     const deleteBtns = screen.getAllByRole("button", { name: /Delete Resource/i });

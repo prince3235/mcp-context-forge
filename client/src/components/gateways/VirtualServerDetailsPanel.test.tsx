@@ -40,10 +40,16 @@ describe("VirtualServerDetailsPanel", () => {
     vi.clearAllMocks();
     (useQuery as any).mockImplementation((path: string) => {
       if (path.includes("/tools")) {
-        return { data: { tools: [{ id: "t1", name: "tool1", originalName: "tool1", gatewayId: "gw1" }] }, isLoading: false };
+        return {
+          data: { tools: [{ id: "t1", name: "tool1", originalName: "tool1", gatewayId: "gw1" }] },
+          isLoading: false,
+        };
       }
       if (path.includes("/resources")) {
-        return { data: { resources: [{ id: "r1", name: "res1", uri: "res1", gatewayId: "gw1" }] }, isLoading: false };
+        return {
+          data: { resources: [{ id: "r1", name: "res1", uri: "res1", gatewayId: "gw1" }] },
+          isLoading: false,
+        };
       }
       if (path.includes("/prompts")) {
         return { data: { prompts: [] }, isLoading: false };
@@ -63,7 +69,7 @@ describe("VirtualServerDetailsPanel", () => {
         error={null}
         onClose={vi.fn()}
         onAddSources={vi.fn()}
-      />
+      />,
     );
     expect(screen.getByText("My Virtual Server")).toBeInTheDocument();
     expect(screen.getByText("Test description")).toBeInTheDocument();
@@ -77,7 +83,7 @@ describe("VirtualServerDetailsPanel", () => {
         error={null}
         onClose={vi.fn()}
         onAddSources={vi.fn()}
-      />
+      />,
     );
     expect(screen.getByText(/No description provided/i)).toBeInTheDocument();
     expect(screen.getByText("Public")).toBeInTheDocument();
@@ -91,7 +97,7 @@ describe("VirtualServerDetailsPanel", () => {
         error={null}
         onClose={vi.fn()}
         onAddSources={vi.fn()}
-      />
+      />,
     );
     expect(screen.getByText("Private")).toBeInTheDocument();
 
@@ -102,7 +108,7 @@ describe("VirtualServerDetailsPanel", () => {
         error={null}
         onClose={vi.fn()}
         onAddSources={vi.fn()}
-      />
+      />,
     );
     expect(screen.getAllByText("N/A").length).toBeGreaterThan(0);
   });
@@ -117,7 +123,7 @@ describe("VirtualServerDetailsPanel", () => {
         error={null}
         onClose={onClose}
         onAddSources={vi.fn()}
-      />
+      />,
     );
     const closeBtn = screen.getByRole("button", { name: /close/i });
     await user.click(closeBtn);
@@ -132,17 +138,17 @@ describe("VirtualServerDetailsPanel", () => {
         error={null}
         onClose={vi.fn()}
         onAddSources={vi.fn()}
-      />
+      />,
     );
-    
+
     const tabs = screen.getAllByRole("tab");
-    const allTab = tabs.find(t => t.textContent === "All")!;
+    const allTab = tabs.find((t) => t.textContent === "All")!;
     allTab.focus();
-    
+
     fireEvent.keyDown(allTab, { key: "ArrowRight" });
     const toolsTab = document.activeElement;
     expect(toolsTab?.textContent).toBe("Tools");
-    
+
     fireEvent.keyDown(toolsTab!, { key: "ArrowLeft" });
     expect(document.activeElement?.textContent).toBe("All");
   });
@@ -155,20 +161,20 @@ describe("VirtualServerDetailsPanel", () => {
         error={null}
         onClose={vi.fn()}
         onAddSources={vi.fn()}
-      />
+      />,
     );
-    
+
     // Wait for sources to load
     await waitFor(() => {
       expect(screen.getByText("All sources")).toBeInTheDocument();
     });
-    
+
     const allSourcesTab = screen.getByText("All sources");
     allSourcesTab.focus();
-    
+
     fireEvent.keyDown(allSourcesTab, { key: "ArrowRight" });
     expect(document.activeElement?.textContent).toBe("Gateway 1");
-    
+
     fireEvent.keyDown(document.activeElement!, { key: "ArrowLeft" });
     expect(document.activeElement?.textContent).toBe("All sources");
   });
@@ -182,20 +188,20 @@ describe("VirtualServerDetailsPanel", () => {
         error={null}
         onClose={vi.fn()}
         onAddSources={vi.fn()}
-      />
+      />,
     );
-    
+
     const searchButton = screen.getByRole("button", { name: "Search components" });
     await user.click(searchButton);
-    
+
     const searchInput = screen.getByPlaceholderText("Search...");
     // focus and type
     fireEvent.focus(searchInput);
     await user.type(searchInput, "tool1");
-    
+
     expect(screen.getByText("tool1")).toBeInTheDocument();
     expect(screen.queryByText("res1")).not.toBeInTheDocument();
-    
+
     // blur while having text
     fireEvent.blur(searchInput);
   });
@@ -209,9 +215,9 @@ describe("VirtualServerDetailsPanel", () => {
         error={null}
         onClose={onClose}
         onAddSources={vi.fn()}
-      />
+      />,
     );
-    
+
     fireEvent.keyDown(window, { key: "Escape" });
     expect(onClose).toHaveBeenCalled();
   });
@@ -225,12 +231,12 @@ describe("VirtualServerDetailsPanel", () => {
         error={null}
         onClose={vi.fn()}
         onAddSources={vi.fn()}
-      />
+      />,
     );
-    
+
     const copyButtons = screen.getAllByRole("button", { name: /Copy/i });
     expect(copyButtons.length).toBeGreaterThan(0);
-    
+
     await user.click(copyButtons[0]);
     expect(copyToClipboard).toHaveBeenCalled();
   });
@@ -243,7 +249,7 @@ describe("VirtualServerDetailsPanel", () => {
         error={{ message: "Test Error" }}
         onClose={vi.fn()}
         onAddSources={vi.fn()}
-      />
+      />,
     );
     expect(screen.getByText("Test Error")).toBeInTheDocument();
   });
@@ -258,9 +264,9 @@ describe("VirtualServerDetailsPanel", () => {
         error={null}
         onClose={vi.fn()}
         onAddSources={onAddSources}
-      />
+      />,
     );
-    
+
     const btn = screen.getByRole("button", { name: /Add Source/i });
     await user.click(btn);
     expect(onAddSources).toHaveBeenCalled();
@@ -275,16 +281,16 @@ describe("VirtualServerDetailsPanel", () => {
         error={null}
         onClose={vi.fn()}
         onAddSources={vi.fn()}
-      />
+      />,
     );
-    
+
     await waitFor(() => {
       expect(screen.getByText("Gateway 1")).toBeInTheDocument();
     });
-    
+
     await user.click(screen.getByText("Gateway 1"));
     expect(screen.getByText("tool1")).toBeInTheDocument();
-    
+
     // Test filter that does not exist to reset to 'all' implicitly if source vanishes (covered by logic)
   });
 });

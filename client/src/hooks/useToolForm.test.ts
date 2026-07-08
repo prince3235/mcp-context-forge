@@ -692,9 +692,7 @@ describe("useToolForm", () => {
 
     it("handles successful submission without onSuccess callback", async () => {
       server.use(
-        http.post("*/tools", () =>
-          HttpResponse.json({ id: "tool-new" }, { status: 201 }),
-        ),
+        http.post("*/tools", () => HttpResponse.json({ id: "tool-new" }, { status: 201 })),
       );
 
       const { result } = renderHook(() => useToolForm());
@@ -739,9 +737,7 @@ describe("useToolForm", () => {
 
       // Change the header value
       act(() => {
-        result.current.setCustomHeaders([
-          { id: "1", key: "X-Key", value: "new-secret" },
-        ]);
+        result.current.setCustomHeaders([{ id: "1", key: "X-Key", value: "new-secret" }]);
       });
 
       await act(async () => {
@@ -781,9 +777,7 @@ describe("useToolForm", () => {
 
       // Change the header value
       act(() => {
-        result.current.setCustomHeaders([
-          { id: "1", key: "X-Key", value: "new-secret" },
-        ]);
+        result.current.setCustomHeaders([{ id: "1", key: "X-Key", value: "new-secret" }]);
       });
 
       await act(async () => {

@@ -996,16 +996,16 @@ describe("Resources", () => {
 
       render(
         <I18nProvider>
-          <ResourceDetailsPanel 
-            resources={[mockResource]} 
+          <ResourceDetailsPanel
+            resources={[mockResource]}
             gatewaySlug="test-gateway"
             open={true}
-            onClose={vi.fn()} 
-            onDeleteResource={vi.fn()} 
+            onClose={vi.fn()}
+            onDeleteResource={vi.fn()}
           />
-        </I18nProvider>
+        </I18nProvider>,
       );
-      
+
       expect(screen.getByText("Test Resource")).toBeInTheDocument();
       expect(screen.getByText("1 KB")).toBeInTheDocument(); // size formatter
       expect(screen.getByText("test-tag")).toBeInTheDocument();
@@ -1017,7 +1017,7 @@ describe("Resources", () => {
     it("handles invalid URI in getUriLabel by falling back to original string", async () => {
       const mockResource: any = createMockResource(1, "test-gateway");
       mockResource.uri = "invalid-uri-no-protocol"; // new URL will throw
-      
+
       server.use(http.get("/resources", () => HttpResponse.json([mockResource])));
       renderWithRouter(<Resources />);
 
@@ -1059,26 +1059,28 @@ describe("Resources", () => {
       server.use(
         http.delete("*/resources/:id", () => {
           return HttpResponse.json({ detail: "Custom API Error Detail" }, { status: 403 });
-        })
+        }),
       );
 
       const moreOptionsButton = screen.getByLabelText("More options for Resource 1");
       await user.click(moreOptionsButton);
       const viewDetailsItem = await screen.findByText("View Details");
       await user.click(viewDetailsItem);
-      
+
       await waitFor(() => {
         expect(screen.getByText(/gateway-test-gateway Resources/i)).toBeInTheDocument();
       });
 
       const deleteActionBtn = screen.getByRole("button", { name: /delete resource/i });
       await user.click(deleteActionBtn);
-      
+
       const confirmDeleteBtn = screen.getByRole("button", { name: /delete/i });
       await user.click(confirmDeleteBtn);
 
       await waitFor(() => {
-        expect(toast.error).toHaveBeenCalledWith(expect.stringContaining("Custom API Error Detail"));
+        expect(toast.error).toHaveBeenCalledWith(
+          expect.stringContaining("Custom API Error Detail"),
+        );
       });
     });
 
@@ -1088,7 +1090,7 @@ describe("Resources", () => {
         http.get("/resources", () => HttpResponse.json([createMockResource(1, "test-gateway")])),
         http.delete("*/resources/:id", () => {
           return HttpResponse.json({ message: "Specific Error Message" }, { status: 400 });
-        })
+        }),
       );
 
       renderWithRouter(<Resources />);
@@ -1101,16 +1103,16 @@ describe("Resources", () => {
       await user.click(moreOptionsButton);
       const deleteItem = screen.getByRole("menuitem", { name: "Delete" });
       await user.click(deleteItem);
-      
+
       const confirmButton = screen.getByRole("button", { name: "Delete" });
       await user.click(confirmButton);
-      
+
       await waitFor(() => {
         expect(mockToastError).toHaveBeenCalledWith(
           expect.stringContaining("Error deleting resource"),
           expect.objectContaining({
-            description: expect.stringContaining("Specific Error Message")
-          })
+            description: expect.stringContaining("Specific Error Message"),
+          }),
         );
       });
     });
@@ -1121,7 +1123,7 @@ describe("Resources", () => {
         http.get("/resources", () => HttpResponse.json([createMockResource(1, "test-gateway")])),
         http.delete("*/resources/:id", () => {
           return HttpResponse.error();
-        })
+        }),
       );
 
       renderWithRouter(<Resources />);
@@ -1134,16 +1136,16 @@ describe("Resources", () => {
       await user.click(moreOptionsButton);
       const deleteItem = screen.getByRole("menuitem", { name: "Delete" });
       await user.click(deleteItem);
-      
+
       const confirmButton = screen.getByRole("button", { name: "Delete" });
       await user.click(confirmButton);
-      
+
       await waitFor(() => {
         expect(mockToastError).toHaveBeenCalledWith(
           expect.stringContaining("Error deleting resource"),
           expect.objectContaining({
-            description: expect.stringContaining("Failed to fetch")
-          })
+            description: expect.stringContaining("Failed to fetch"),
+          }),
         );
       });
     });
