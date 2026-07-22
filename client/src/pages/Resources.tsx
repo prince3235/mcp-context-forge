@@ -439,12 +439,15 @@ export function Resources() {
 
       if (err instanceof ApiError) {
         const detail = extractApiErrorDetail(err.body);
-        errorMessage =
+        const bodyMsg = (err.body as Record<string, unknown>)?.message;
+        const finalMsg =
           detail ||
-          intl.formatMessage(
-            { id: "resources.delete.errorWithMessage" },
-            { message: err.message || intl.formatMessage({ id: "resources.delete.errorUnknown" }) },
-          );
+          (typeof bodyMsg === "string" ? bodyMsg : err.message) ||
+          intl.formatMessage({ id: "resources.delete.errorUnknown" });
+        errorMessage = intl.formatMessage(
+          { id: "resources.delete.errorWithMessage" },
+          { message: finalMsg },
+        );
       } else if (err instanceof Error) {
         errorMessage = intl.formatMessage(
           { id: "resources.delete.errorWithMessage" },

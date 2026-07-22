@@ -8,7 +8,6 @@ export function setupAuthenticatedTest() {
   localStorage.setItem("user-locale", "en-US");
   window.history.pushState({}, "", "/app/");
 }
-
 function AllTheProviders({ children }: { children: ReactNode }) {
   return <I18nProvider>{children}</I18nProvider>;
 }
