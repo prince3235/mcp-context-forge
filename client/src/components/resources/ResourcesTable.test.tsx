@@ -52,9 +52,9 @@ describe("ResourcesTable", () => {
     const resources = [createMockResource(1), createMockResource(2), createMockResource(3)];
     render(<ResourcesTable resources={resources} onSelectResource={mockOnSelectResource} />);
 
-    expect(screen.getByText("Resource 1")).toBeInTheDocument();
-    expect(screen.getByText("Resource 2")).toBeInTheDocument();
-    expect(screen.getByText("Resource 3")).toBeInTheDocument();
+    expect(screen.getByText("Resource 1 Title")).toBeInTheDocument();
+    expect(screen.getByText("Resource 2 Title")).toBeInTheDocument();
+    expect(screen.getByText("Resource 3 Title")).toBeInTheDocument();
   });
 
   it("gives each row's more-options trigger a unique accessible name", () => {
@@ -118,7 +118,7 @@ describe("ResourcesTable", () => {
     const resources = [createMockResource(1)];
     render(<ResourcesTable resources={resources} onSelectResource={mockOnSelectResource} />);
 
-    const row = screen.getByText("Resource 1").closest("tr");
+    const row = screen.getByText("Resource 1 Title").closest("tr");
     expect(row).toBeInTheDocument();
 
     if (row) {
@@ -137,10 +137,10 @@ describe("ResourcesTable", () => {
       />,
     );
 
-    const selectedRow = screen.getByText("Resource 1").closest("tr");
+    const selectedRow = screen.getByText("Resource 1 Title").closest("tr");
     expect(selectedRow).toHaveAttribute("data-state", "selected");
 
-    const unselectedRow = screen.getByText("Resource 2").closest("tr");
+    const unselectedRow = screen.getByText("Resource 2 Title").closest("tr");
     expect(unselectedRow).not.toHaveAttribute("data-state", "selected");
   });
 
@@ -192,7 +192,7 @@ describe("ResourcesTable", () => {
     const resources = [createMockResource(1)];
     render(<ResourcesTable resources={resources} onSelectResource={mockOnSelectResource} />);
 
-    const row = screen.getByText("Resource 1").closest("tr");
+    const row = screen.getByText("Resource 1 Title").closest("tr");
     expect(row).toHaveClass("cursor-pointer");
   });
 
@@ -394,7 +394,7 @@ describe("ResourcesTable", () => {
       />,
     );
 
-    let selectedRow = screen.getByText("Resource 1").closest("tr");
+    let selectedRow = screen.getByText("Resource 1 Title").closest("tr");
     expect(selectedRow).toHaveAttribute("data-state", "selected");
 
     rerender(
@@ -405,7 +405,7 @@ describe("ResourcesTable", () => {
       />,
     );
 
-    selectedRow = screen.getByText("Resource 1").closest("tr");
+    selectedRow = screen.getByText("Resource 1 Title").closest("tr");
     expect(selectedRow).toHaveAttribute("data-state", "selected");
   });
 
@@ -419,7 +419,7 @@ describe("ResourcesTable", () => {
       />,
     );
 
-    const selectedRow = screen.getByText("Resource 1").closest("tr");
+    const selectedRow = screen.getByText("Resource 1 Title").closest("tr");
     expect(selectedRow).toHaveAttribute("data-state", "selected");
 
     rerender(
@@ -430,10 +430,10 @@ describe("ResourcesTable", () => {
       />,
     );
 
-    const previouslySelectedRow = screen.getByText("Resource 1").closest("tr");
+    const previouslySelectedRow = screen.getByText("Resource 1 Title").closest("tr");
     expect(previouslySelectedRow).not.toHaveAttribute("data-state", "selected");
 
-    const newSelectedRow = screen.getByText("Resource 2").closest("tr");
+    const newSelectedRow = screen.getByText("Resource 2 Title").closest("tr");
     expect(newSelectedRow).toHaveAttribute("data-state", "selected");
   });
 
@@ -447,8 +447,8 @@ describe("ResourcesTable", () => {
       />,
     );
 
-    const row1 = screen.getByText("Resource 1").closest("tr");
-    const row2 = screen.getByText("Resource 2").closest("tr");
+    const row1 = screen.getByText("Resource 1 Title").closest("tr");
+    const row2 = screen.getByText("Resource 2 Title").closest("tr");
 
     expect(row1).not.toHaveAttribute("data-state", "selected");
     expect(row2).not.toHaveAttribute("data-state", "selected");
@@ -458,8 +458,8 @@ describe("ResourcesTable", () => {
     const resources = [createMockResource(1), createMockResource(2)];
     render(<ResourcesTable resources={resources} onSelectResource={mockOnSelectResource} />);
 
-    const row1 = screen.getByText("Resource 1").closest("tr");
-    const row2 = screen.getByText("Resource 2").closest("tr");
+    const row1 = screen.getByText("Resource 1 Title").closest("tr");
+    const row2 = screen.getByText("Resource 2 Title").closest("tr");
 
     expect(row1).not.toHaveAttribute("data-state", "selected");
     expect(row2).not.toHaveAttribute("data-state", "selected");

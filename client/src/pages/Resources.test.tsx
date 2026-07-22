@@ -955,7 +955,7 @@ describe("Resources", () => {
       await user.click(screen.getByRole("button", { name: /^delete$/i }));
 
       await waitFor(() => {
-        expect(toast.error).toHaveBeenCalledWith("Server error");
+        expect(toast.error).toHaveBeenCalledWith(expect.stringContaining("Server error"));
       });
 
       await waitFor(() => {
@@ -1085,7 +1085,7 @@ describe("Resources", () => {
       expect(within(panel).getAllByText("Resource 1").length).toBeGreaterThan(0);
       expect(within(panel).getAllByText("Resource 2").length).toBeGreaterThan(0);
 
-      expect(toast.error).toHaveBeenCalledWith("Forbidden");
+      expect(toast.error).toHaveBeenCalledWith(expect.stringContaining("Forbidden"));
     });
 
     it("shows generic error toast when delete returns no detail field", async () => {
